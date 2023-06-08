@@ -4,14 +4,14 @@
   <arg name="depth_camerainfo_topic_name" default="camera/color/camera_info" />
   <arg name="depth_image_topic_name" default="camera/aligned_depth_to_color/image_raw" />
   <arg name="rgb_image_topic_name" default="camera/color/image_raw" />
-  <arg name="vehicle_odom_topic_name" default="odometry" />
+  <arg name="vehicle_pose_topic_name" default="odometry" />
 
   <node name="visual_servo_control_node" pkg="visual_servo_control" type="visual_servo_control_node" output="screen" 
     args="$(arg depth_camerainfo_topic_name) $(arg depth_image_topic_name) $(arg rgb_image_topic_name)">
   </node>
 
   <node name="virtual_line_projection_node" pkg="visual_servo_control" type="virtual_line_projection_node" output="screen" 
-    args="$(arg depth_camerainfo_topic_name) $(arg rgb_image_topic_name) $(arg vehicle_odom_topic_name) $(arg depth_image_topic_name)">
+    args="$(arg depth_camerainfo_topic_name) $(arg rgb_image_topic_name) $(arg vehicle_pose_topic_name) $(arg depth_image_topic_name)">
   </node>
 
 </launch>

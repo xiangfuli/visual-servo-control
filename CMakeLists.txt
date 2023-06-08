@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   nav_msgs
   std_msgs
+  geometry_msgs
   vision_process
   vision_lines
   cv_bridge

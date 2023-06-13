@@ -18,7 +18,7 @@
 #include "vision_process/planes/plane_recognizer.hpp"
 #include "vision_process/utils/image_utils.hpp"
 #include "vision_process/utils/so3_utils.hpp"
-#include "vision_lines/line.h"
+#include "visual_servo_control/line.h"
 
 ros::Publisher rgb_virtual_image_pub, virtual_line_measure_pub;
 ros::Subscriber rgb_image_sub, vehicle_position_sub, depth_image_sub;
@@ -42,7 +42,7 @@ bool ready_to_compute_velocity_y = false;
 bool already_prejected_lines = false;
 
 // publish the virtual line's properties: rho and theta
-vision_lines::line virtual_line_msg;
+visual_servo_control::line virtual_line_msg;
 
 bool already_received_odom = false;
 
@@ -119,7 +119,7 @@ void depth_image_callback(sensor_msgs::Image depth_image) {
 
   // compute the required velocity
   ts_get_depth_image = depth_image.header.stamp;
-  float dt = ts_get_depth_image.toSec() - last_ts_get_depth_image.toSec();
+  float dt = (ts_get_depth_image - last_ts_get_depth_image).toSec();
   // float pitch_velocity = (pitch_radiant - last_pitch_radiant) / dt;
   float depth_velocity = (depth_to_the_line - last_depth_to_the_line) / dt;
   float pixel_velocity = (pixel_distance_to_the_camera_center - last_pixel_distance_to_the_camera_center) / dt;
@@ -221,7 +221,7 @@ int main(int argc, char** argv) {
               camera_info.K[3], camera_info.K[4], camera_info.K[5], 
               camera_info.K[6], camera_info.K[7], camera_info.K[8];
 
-  std::cout << K_matrix << std::endl;
+  ROS_INFO("Get camerea K matrix, fx: %f, fy: %f, cx: %f, cy: %f", camera_info.K[0], camera_info.K[4], camera_info.K[2], camera_info.K[5]);
 
   // specify the virtual line position in camera frame
   virtual_line_start_point << -4, -0.85 + 0.14, 9.4;
@@ -232,7 +232,7 @@ int main(int argc, char** argv) {
   depth_image_sub = n.subscribe(camera_depth_image_topic_name, 1, depth_image_callback);
 
   rgb_virtual_image_pub = n.advertise<sensor_msgs::Image>("virtual_camera_image/raw", 1);
-  virtual_line_measure_pub = n.advertise<vision_lines::line>("virtual_line_measure", 1);
+  virtual_line_measure_pub = n.advertise<visual_servo_control::line>("virtual_line_measure", 1);
 
   ros::Rate loop_rate(30);
 

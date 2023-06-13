@@ -14,7 +14,6 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
   vision_process
-  vision_lines
   cv_bridge
   message_generation
 )
@@ -58,6 +57,8 @@ find_package(Eigen3 REQUIRED)
 add_message_files(
   FILES
   SurfaceNorm.msg
+  line.msg
+  VelocityEstimation.msg
 )
 
 ## Generate services in the 'srv' folder
@@ -144,7 +145,8 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(visual_servo_control_node src/visual_servo_control_node.cpp)
 add_executable(virtual_line_projection_node src/virtual_line_projection_node.cpp)
-
+add_executable(line_detection_node src/line_detection_node.cpp)
+add_executable(velocity_estimator_node src/velocity_estimator_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -156,6 +158,8 @@ add_executable(virtual_line_projection_node src/virtual_line_projection_node.cpp
 ## same as for the library above
 add_dependencies(visual_servo_control_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} ${OPENCV_LIBS})
 add_dependencies(virtual_line_projection_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} ${OPENCV_LIBS})
+add_dependencies(line_detection_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} ${OPENCV_LIBS})
+add_dependencies(velocity_estimator_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}_node
@@ -166,7 +170,13 @@ target_link_libraries(virtual_line_projection_node
   ${catkin_LIBRARIES}
   ${OPENCV_LIBS}
 )
-
+target_link_libraries(line_detection_node
+  ${catkin_LIBRARIES}
+  ${OPENCV_LIBS}
+)
+target_link_libraries(velocity_estimator_node
+  ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##
